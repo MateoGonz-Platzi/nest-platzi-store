@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common';
 import { HttpModule, HttpService } from '@nestjs/axios';
-//Enviroments and Config
+//Enviroments Config
 import { ConfigModule } from '@nestjs/config';
 import { lastValueFrom } from 'rxjs';
 import * as Joi from 'joi';
+import { Client } from 'pg';
 
-
-import { enviroments } from './enviroments';
+//Environment
+import { environments } from './environments';
 //Controllers
 import { AppController } from './app.controller';
 import { OrdersController } from './modules/orders/controllers/orders.controller';
@@ -17,6 +18,21 @@ import { UsersModule } from './modules/users/users.module';
 import { ProductsModule } from './modules/products/products.module';
 import { DatabaseModule } from './database/database.module';
 import config from './config';
+
+const client = new Client({
+  user: 'root',
+  password: '123456',
+  database: 'store_db',
+  host: 'localhost',
+  port: 5432
+});
+
+client.connect();
+
+client.query('SELECT * FROM tasks', (err, res) => {
+  console.log(err);
+  console.log(res.rows);
+})
 @Module({
   imports: [
     UsersModule, 
@@ -24,7 +40,7 @@ import config from './config';
     HttpModule, 
     DatabaseModule,
     ConfigModule.forRoot({
-      envFilePath: enviroments[process.env.NODE_ENV] || './.env',
+      envFilePath: environments[process.env.NODE_ENV] || './.env',
       load: [config],
       isGlobal: true,
       validationSchema: Joi.object({
