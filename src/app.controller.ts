@@ -14,7 +14,10 @@ export class AppController {
     return 'NUEVO ENDPOINT';
   }
 
-  
+  @Get('tasks')
+  getTasks() {
+    return this.appService.getTasks();
+  }
 
   
 }
