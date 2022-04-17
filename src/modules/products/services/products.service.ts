@@ -1,29 +1,23 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from  'mongoose';
+
 import { Product } from './../entities/product.entity';
 import { CreateProductDto, UpdateProductDto } from '../dtos/products.dtos';
 
 @Injectable()
 export class ProductsService {
-  // Esta variable funciona como autoincrementador,
-  // para simular una base de datos
-  private counterId = 1;
-  private products: Product[] = [
-    {
-      id: 1,
-      name: 'Tenis sb Stefan Janosky',
-      description: 'Zapatos usados para skateboarding',
-      price: 122,
-      stock: 4,
-      image: '',
-    },
-  ];
-  //Retorna todos
+  // Constructor que instancia el modelo de producto y las funcionalidades de Mongo
+  constructor(
+    @InjectModel(Product.name) private productModel: Model<Product>,
+  ) { }
+  //Mongo Retorna todos
   findAll() {
-    return this.products;
+    return this.productModel.find().exec();
   }
-  //Retorna solo uno
-  findOne(id: number) {
-    const PRODUCT = this.products.find((item) => item.id === id);
+  //Mongo Retorna solo uno
+  async findOne(id: string) {
+    const PRODUCT = await this.productModel.findById(id).exec();
     if (!PRODUCT) {
       throw new NotFoundException(
         `ERROR_SERVICE: The product ${id} does not exist`,
@@ -32,7 +26,7 @@ export class ProductsService {
     return PRODUCT;
   }
 
-  create(payload: CreateProductDto) {
+/*   create(payload: CreateProductDto) {
     console.log(payload);
     this.counterId += 1;
     const newProduct = {
@@ -67,5 +61,5 @@ export class ProductsService {
       this.products = this.products.filter((item) => item.id !== id);
       return { message: 'The product is deleted', deleted: temp };
     }
-  }
+  } */
 }

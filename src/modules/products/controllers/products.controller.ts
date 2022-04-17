@@ -31,7 +31,7 @@ export class ProductsController {
     @Query('limit') limit = 100, //En caso de que no envién el limite
     @Query('offset') offset = 0,
     @Query('brand') brand: string,
-  ) { return this.productsService.findAll(); } //RETORNAMOS EL METODO DEL 
+  ) { return this.productsService.findAll(); } //RETORNAMOS TODOS LOS PRODUCTOS
 
   @Get('filter')
   getFilter() {
@@ -42,32 +42,23 @@ export class ProductsController {
   @Get(':productId')
   @HttpCode(HttpStatus.ACCEPTED) //f12 para ir a la definicion y entender como funcionan los estados personalizados de nest
   getOne(
-    /* @Res() response: Response, */
-    @Param('productId', ParseIntPipe) productId: number,
+    @Param('productId') productId: string,
   ) {
     return this.productsService.findOne(productId);
   }
 
-  @Post()
+  /* @Post()
   create(@Body() payload: CreateProductDto) {
-    /* return {
-      message: 'Se creó un producto',
-      payload,
-    }; */
     return this.productsService.create(payload);
   }
 
   @Put(':id')
   update(@Param('id') id: number, @Body() payload: UpdateProductDto) {
-    /* return {
-      id,
-      payload,
-    }; */
     return this.productsService.update(+id, payload);
   }
 
   @Delete(':id')
   delete(@Param('id') id: number) {
     return this.productsService.remove(+id);
-  }
+  } */
 }
