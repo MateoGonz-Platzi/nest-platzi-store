@@ -11,11 +11,6 @@ const PROD_API_KEY = 'prod1123638';
 @Global()
 @Module({
   imports: [ 
-    /* MongooseModule.forRoot('mongodb://localhost:27017', {
-      user: 'root',
-      pass: 'root',
-      dbName: 'platzi-store'
-    }), */
     MongooseModule.forRootAsync({
       useFactory: (configService: ConfigType<typeof config>) => {
         const {
@@ -26,7 +21,7 @@ const PROD_API_KEY = 'prod1123638';
           port,
           dbName,
         } = configService.mongo;
-        
+
         return {
           uri: `${connection}://${host}:${port}`,
           user,
