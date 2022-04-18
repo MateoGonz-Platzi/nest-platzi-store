@@ -1,12 +1,15 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { ConfigService, ConfigType } from '@nestjs/config';
+import { Db } from 'mongodb';
+
 import config from './config';
 @Injectable()
 export class AppService {
   constructor(
     /* private configService: ConfigService,  */
     @Inject(config.KEY) private configService: ConfigType<typeof config>,
-    @Inject('TASKS') private tasks: any[]
+    @Inject('TASKS') private tasks: any[],
+    @Inject('MONGO') private database: Db,
   ) {}
   
   getHello(): string {
@@ -23,5 +26,10 @@ export class AppService {
     <p><b>The DB Port is:</b> ${dbPort}</p>
     <p><b>The Enviroment is:</b> ${enviroment}</p>
     `;
+  }
+
+  getTasks() {
+    const tasksCollection = this.database.collection('tasks');
+    return tasksCollection.find().toArray();
   }
 }

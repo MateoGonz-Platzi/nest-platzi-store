@@ -1,29 +1,37 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model, FilterQuery } from  'mongoose';
+
 import { Product } from './../entities/product.entity';
-import { CreateProductDto, UpdateProductDto } from '../dtos/products.dtos';
+import { CreateProductDto, FilterProductsDto, UpdateProductDto } from '../dtos/products.dtos';
 
 @Injectable()
 export class ProductsService {
-  // Esta variable funciona como autoincrementador,
-  // para simular una base de datos
-  private counterId = 1;
-  private products: Product[] = [
-    {
-      id: 1,
-      name: 'Tenis sb Stefan Janosky',
-      description: 'Zapatos usados para skateboarding',
-      price: 122,
-      stock: 4,
-      image: '',
-    },
-  ];
-  //Retorna todos
-  findAll() {
-    return this.products;
+  // Constructor que instancia el modelo de producto y las funcionalidades de Mongo
+  constructor(
+    @InjectModel(Product.name) private productModel: Model<Product>,
+  ) { }
+  //Mongo Retorna todos
+  findAll(params?: FilterProductsDto) {
+    if (params) {
+      const filters: FilterQuery<Product> = {};  // 👈  Implementamos FilterQuery de mongoose
+      const limit = params.limit || 10; // 👈  Implementamos Una validación en la paginación 
+      const offset = params.offset || 0;
+      const { minPrice , maxPrice } = params;
+      if (minPrice && maxPrice) { // 👈  Si existen los parametros precio minimo y máximo
+        filters.price = { $gte: minPrice, $lte: maxPrice }; // 👈  Se añade el rango de precio en la consulta para Mongo
+      }
+      return this.productModel
+        .find(filters)
+        .skip(offset)
+        .limit(limit)
+        .exec();  // 👈 Se obtiene la consulta
+    }
+    return this.productModel.find().exec();
   }
-  //Retorna solo uno
-  findOne(id: number) {
-    const PRODUCT = this.products.find((item) => item.id === id);
+  //Mongo Retorna solo uno
+  async findOne(id: string) {
+    const PRODUCT = await this.productModel.findById(id).exec();
     if (!PRODUCT) {
       throw new NotFoundException(
         `ERROR_SERVICE: The product ${id} does not exist`,
@@ -33,39 +41,25 @@ export class ProductsService {
   }
 
   create(payload: CreateProductDto) {
-    console.log(payload);
-    this.counterId += 1;
-    const newProduct = {
-      id: this.counterId,
-      ...payload,
-    };
-    this.products.push(newProduct);
-    return newProduct;
+    const newProduct = new this.productModel(payload);
+    return newProduct.save();
   }
+  
+  update(id: string, payload: UpdateProductDto) {
+    const PRODUCT = this.productModel
+      .findByIdAndUpdate(id, { $set: payload }, { new: true })
+      .exec();
 
-  update(id: number, payload: UpdateProductDto) {
-    const PRODUCT = this.findOne(id);
-    if (PRODUCT) {
-      const index = this.products.findIndex((item) => item.id === id);
-      this.products[index] = {
-        ...PRODUCT,
-        ...payload,
-      };
-      return this.products[index];
-    }
-    return { message: 'ERROR_SERVICE: The id does not exist.' };
-  }
-
-  remove(id: number) {
-    const PRODUCT = this.findOne(id);
     if (!PRODUCT) {
       throw new NotFoundException(
         `ERROR_SERVICE: The product ${id} does not exist`,
       );
-    } else {
-      const temp = PRODUCT;
-      this.products = this.products.filter((item) => item.id !== id);
-      return { message: 'The product is deleted', deleted: temp };
     }
+
+    return PRODUCT;
+  }
+
+  remove(id: string) {
+    return this.productModel.findByIdAndDelete(id);
   }
 }
