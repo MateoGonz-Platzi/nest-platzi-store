@@ -16,7 +16,7 @@ import { Response } from 'express';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 import { ProductsService } from '../services/products.service';
-import { CreateProductDto, UpdateProductDto } from '../dtos/products.dtos';
+import { CreateProductDto, FilterProductsDto, UpdateProductDto } from '../dtos/products.dtos';
 import { MongoIdPipe } from './../../../common/mongo-id.pipe';
 /* import { ParseIntPipe } from '../../../common/platzi-pipe/parse-int.pipe'; */
 
@@ -28,11 +28,9 @@ export class ProductsController {
   //ENDPOINT PARA VARIOS PRODUCTOS:
   @Get()
   @ApiOperation({ summary: 'List all products'})
-  getProducts(
-    @Query('limit') limit = 100, //En caso de que no envién el limite
-    @Query('offset') offset = 0,
-    @Query('brand') brand: string,
-  ) { return this.productsService.findAll(); } //RETORNAMOS TODOS LOS PRODUCTOS
+  getProducts(@Query() params: FilterProductsDto) { 
+    return this.productsService.findAll(params);
+  }//RETORNAMOS TODOS LOS PRODUCTOS
 
   @Get('filter')
   getFilter() {

@@ -5,6 +5,8 @@ import {
   IsUrl,
   IsNotEmpty,
   IsPositive,
+  IsOptional,
+  Min,
 } from 'class-validator';
 export class CreateProductDto {
   @IsString()
@@ -36,3 +38,13 @@ export class CreateProductDto {
 }
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {}
+
+export class FilterProductsDto { // 👈 new DTO
+  @IsOptional()
+  @IsPositive()
+  limit: number;
+
+  @IsOptional()
+  @Min(0)
+  offset: number;
+}
