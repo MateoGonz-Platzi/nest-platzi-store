@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from  'mongoose';
+import { Model, FilterQuery } from  'mongoose';
 
 import { Product } from './../entities/product.entity';
 import { CreateProductDto, FilterProductsDto, UpdateProductDto } from '../dtos/products.dtos';
@@ -12,10 +12,20 @@ export class ProductsService {
     @InjectModel(Product.name) private productModel: Model<Product>,
   ) { }
   //Mongo Retorna todos
-  findAll(params?: FilterProductsDto) { // 👈 
+  findAll(params?: FilterProductsDto) {
     if (params) {
-      const { limit, offset } = params;
-      return this.productModel.find().skip(offset).limit(limit).exec();  // 👈
+      const filters: FilterQuery<Product> = {};  // 👈  Implementamos FilterQuery de mongoose
+      const limit = params.limit || 10; // 👈  Implementamos Una validación en la paginación 
+      const offset = params.offset || 0;
+      const { minPrice , maxPrice } = params;
+      if (minPrice && maxPrice) { // 👈  Si existen los parametros precio minimo y máximo
+        filters.price = { $gte: minPrice, $lte: maxPrice }; // 👈  Se añade el rango de precio en la consulta para Mongo
+      }
+      return this.productModel
+        .find(filters)
+        .skip(offset)
+        .limit(limit)
+        .exec();  // 👈 Se obtiene la consulta
     }
     return this.productModel.find().exec();
   }

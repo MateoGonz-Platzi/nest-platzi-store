@@ -7,6 +7,7 @@ import {
   IsPositive,
   IsOptional,
   Min,
+  ValidateIf,
 } from 'class-validator';
 export class CreateProductDto {
   @IsString()
@@ -39,7 +40,7 @@ export class CreateProductDto {
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {}
 
-export class FilterProductsDto { // 👈 new DTO
+export class FilterProductsDto {
   @IsOptional()
   @IsPositive()
   limit: number;
@@ -47,4 +48,13 @@ export class FilterProductsDto { // 👈 new DTO
   @IsOptional()
   @Min(0)
   offset: number;
+
+  @IsOptional()
+  @ValidateIf((params) => params.maxPrice)
+  @Min(0)
+  minPrice: number;  
+
+  @ValidateIf((params) => params.minPrice)
+  @IsPositive()
+  maxPrice: number;   
 }
