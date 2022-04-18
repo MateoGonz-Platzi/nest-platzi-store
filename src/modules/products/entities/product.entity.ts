@@ -10,7 +10,7 @@ export class Product extends Document {
   @Prop()
   description: string;
 
-  @Prop({type: Number})
+  @Prop({type: Number, index: true})
   price: number;
 
   @Prop({type: Number})
