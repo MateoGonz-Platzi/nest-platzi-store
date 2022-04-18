@@ -39,6 +39,7 @@ export class ProductsController {
 
   //RETORNAR UN SOLO PRODUCTO
   @Get(':productId')
+  @ApiOperation({ summary: 'List only product'})
   @HttpCode(HttpStatus.ACCEPTED) //f12 para ir a la definicion y entender como funcionan los estados personalizados de nest
   getOne(
     @Param('productId', MongoIdPipe) productId: string,
@@ -47,16 +48,19 @@ export class ProductsController {
   }
 
   @Post()
+  @ApiOperation({ summary: 'Create product'})
   create(@Body() payload: CreateProductDto) {
     return this.productsService.create(payload);
   }
 
   @Put(':id')
+  @ApiOperation({ summary: 'Update product'})
   update(@Param('id', MongoIdPipe) id: string, @Body() payload: UpdateProductDto) {
     return this.productsService.update(id, payload);
   }
 
   @Delete(':id')
+  @ApiOperation({ summary: 'Delete product'})
   delete(@Param('id', MongoIdPipe) id: string) {
     return this.productsService.remove(id);
   }

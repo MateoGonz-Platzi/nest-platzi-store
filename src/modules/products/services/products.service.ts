@@ -12,7 +12,7 @@ export class ProductsService {
     @InjectModel(Product.name) private productModel: Model<Product>,
   ) { }
   //Mongo Retorna todos
-  findAll(params?: FilterProductsDto) {
+  async findAll(params?: FilterProductsDto) {
     if (params) {
       const filters: FilterQuery<Product> = {};  // 👈  Implementamos FilterQuery de mongoose
       const limit = params.limit || 10; // 👈  Implementamos Una validación en la paginación 
@@ -21,13 +21,13 @@ export class ProductsService {
       if (minPrice && maxPrice) { // 👈  Si existen los parametros precio minimo y máximo
         filters.price = { $gte: minPrice, $lte: maxPrice }; // 👈  Se añade el rango de precio en la consulta para Mongo
       }
-      return this.productModel
+      return await this.productModel
         .find(filters)
         .skip(offset)
         .limit(limit)
         .exec();  // 👈 Se obtiene la consulta
     }
-    return this.productModel.find().exec();
+    return await this.productModel.find().exec();
   }
   //Mongo Retorna solo uno
   async findOne(id: string) {
@@ -40,26 +40,24 @@ export class ProductsService {
     return PRODUCT;
   }
 
-  create(payload: CreateProductDto) {
-    const newProduct = new this.productModel(payload);
+  async create(payload: CreateProductDto) {
+    const newProduct = await new this.productModel(payload);
     return newProduct.save();
   }
   
-  update(id: string, payload: UpdateProductDto) {
-    const PRODUCT = this.productModel
+  async update(id: string, payload: UpdateProductDto) {
+    const PRODUCT = await this.productModel
       .findByIdAndUpdate(id, { $set: payload }, { new: true })
       .exec();
-
     if (!PRODUCT) {
       throw new NotFoundException(
         `ERROR_SERVICE: The product ${id} does not exist`,
       );
     }
-
     return PRODUCT;
   }
 
-  remove(id: string) {
-    return this.productModel.findByIdAndDelete(id);
+  async remove(id: string) {
+    return await this.productModel.findByIdAndDelete(id);
   }
 }

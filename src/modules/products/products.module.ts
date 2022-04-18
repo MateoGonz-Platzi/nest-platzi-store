@@ -10,6 +10,7 @@ import { ProductsService } from './services/products.service';
 import { BrandsService } from './services/brands.service';
 import { CategoriesService } from './services/categories.service';
 import { Product, ProductSchema } from './entities/product.entity';
+import { Brand, BrandSchema } from './entities/brand.entity';
 
 @Module({
   imports: [
@@ -17,6 +18,10 @@ import { Product, ProductSchema } from './entities/product.entity';
       {
         name: Product.name,
         schema: ProductSchema
+      },
+      {
+        name: Brand.name,
+        schema: BrandSchema,
       },
     ]),
   ], 
