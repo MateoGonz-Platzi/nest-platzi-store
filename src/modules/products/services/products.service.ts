@@ -26,40 +26,26 @@ export class ProductsService {
     return PRODUCT;
   }
 
-/*   create(payload: CreateProductDto) {
-    console.log(payload);
-    this.counterId += 1;
-    const newProduct = {
-      id: this.counterId,
-      ...payload,
-    };
-    this.products.push(newProduct);
-    return newProduct;
+  create(payload: CreateProductDto) {
+    const newProduct = new this.productModel(payload);
+    return newProduct.save();
   }
+  
+  update(id: string, payload: UpdateProductDto) {
+    const PRODUCT = this.productModel
+      .findByIdAndUpdate(id, { $set: payload }, { new: true })
+      .exec();
 
-  update(id: number, payload: UpdateProductDto) {
-    const PRODUCT = this.findOne(id);
-    if (PRODUCT) {
-      const index = this.products.findIndex((item) => item.id === id);
-      this.products[index] = {
-        ...PRODUCT,
-        ...payload,
-      };
-      return this.products[index];
-    }
-    return { message: 'ERROR_SERVICE: The id does not exist.' };
-  }
-
-  remove(id: number) {
-    const PRODUCT = this.findOne(id);
     if (!PRODUCT) {
       throw new NotFoundException(
         `ERROR_SERVICE: The product ${id} does not exist`,
       );
-    } else {
-      const temp = PRODUCT;
-      this.products = this.products.filter((item) => item.id !== id);
-      return { message: 'The product is deleted', deleted: temp };
     }
-  } */
+
+    return PRODUCT;
+  }
+
+  remove(id: string) {
+    return this.productModel.findByIdAndDelete(id);
+  }
 }
