@@ -17,6 +17,7 @@ import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
 import { ProductsService } from '../services/products.service';
 import { CreateProductDto, UpdateProductDto } from '../dtos/products.dtos';
+import { MongoIdPipe } from './../../../common/mongo-id.pipe';
 /* import { ParseIntPipe } from '../../../common/platzi-pipe/parse-int.pipe'; */
 
 @ApiTags('PRODUCTS')
@@ -42,7 +43,7 @@ export class ProductsController {
   @Get(':productId')
   @HttpCode(HttpStatus.ACCEPTED) //f12 para ir a la definicion y entender como funcionan los estados personalizados de nest
   getOne(
-    @Param('productId') productId: string,
+    @Param('productId', MongoIdPipe) productId: string,
   ) {
     return this.productsService.findOne(productId);
   }
@@ -53,12 +54,12 @@ export class ProductsController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() payload: UpdateProductDto) {
+  update(@Param('id', MongoIdPipe) id: string, @Body() payload: UpdateProductDto) {
     return this.productsService.update(id, payload);
   }
 
   @Delete(':id')
-  delete(@Param('id') id: string) {
+  delete(@Param('id', MongoIdPipe) id: string) {
     return this.productsService.remove(id);
   }
 }
