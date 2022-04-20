@@ -23,15 +23,16 @@ export class ProductsService {
       }
       return await this.productModel
         .find(filters)
+        .populate('brand')
         .skip(offset)
         .limit(limit)
         .exec();  // 👈 Se obtiene la consulta
     }
-    return await this.productModel.find().exec();
+    return await this.productModel.find().populate('brand').exec();
   }
   //Mongo Retorna solo uno
   async findOne(id: string) {
-    const PRODUCT = await this.productModel.findById(id).exec();
+    const PRODUCT = await this.productModel.findById(id).populate('brand').exec();
     if (!PRODUCT) {
       throw new NotFoundException(
         `ERROR_SERVICE: The product ${id} does not exist`,

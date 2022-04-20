@@ -8,6 +8,7 @@ import {
   IsOptional,
   Min,
   ValidateIf,
+  IsMongoId,
 } from 'class-validator';
 export class CreateProductDto {
   @IsString()
@@ -36,6 +37,10 @@ export class CreateProductDto {
   @IsNotEmpty()
   @ApiProperty({ description: 'Product image'})
   readonly image: string;
+
+  @IsNotEmpty()
+  @IsMongoId()
+  readonly brand: string;
 }
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {}
