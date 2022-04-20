@@ -37,13 +37,14 @@ export class CustomerService {
   //update customer
   async update(id: string, payload: UpdateCustomersDto) {
     const CUSTOMER = await this.customerModel
-      .findByIdAndUpdate(id, { $set: payload }, { new: true } )
-      .exec();
+    .findByIdAndUpdate(id, { $set: payload }, { new: true })
+    .exec();
     if(!CUSTOMER) {
       throw new NotFoundException(
         `ERROR_SERVICE: The customer ${id} does not exist`,
       );
     }
+    return CUSTOMER;
   }
 
   //Remove customer
