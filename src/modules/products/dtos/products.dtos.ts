@@ -22,14 +22,14 @@ export class CreateProductDto {
   readonly description: string;
 
   @IsNumber()
-  @IsPositive() //Esto permite validar que el número sea positivo
   @IsNotEmpty()
+  @IsPositive() //Esto permite validar que el número sea positivo
   @ApiProperty({ description: 'Product price'})
   readonly price: number;
 
   @IsNumber()
-  @IsPositive()
   @IsNotEmpty()
+  @IsPositive()
   @ApiProperty({ description: 'Product stock'})
   readonly stock: number;
 
@@ -38,8 +38,9 @@ export class CreateProductDto {
   @ApiProperty({ description: 'Product image'})
   readonly image: string;
 
-  @IsNotEmpty()
   @IsMongoId()
+  @IsNotEmpty()
+  @ApiProperty({ description: 'Product brand'})
   readonly brand: string;
 }
 
