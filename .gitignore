@@ -3,6 +3,7 @@ dist
 node_modules
 database/*
 !database/script
+mongo_data
 
 # Logs
 logs
