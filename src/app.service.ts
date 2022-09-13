@@ -1,6 +1,6 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { ConfigService, ConfigType } from '@nestjs/config';
-import config from './config';
+import config from './config/config';
 import { Client, QueryResult } from 'pg';
 @Injectable()
 export class AppService {
@@ -35,6 +35,5 @@ export class AppService {
       resolve(res.rows);
     })
   });
-    
   }
 }

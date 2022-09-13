@@ -17,7 +17,8 @@ import { AppService } from './app.service';
 import { UsersModule } from './modules/users/users.module';
 import { ProductsModule } from './modules/products/products.module';
 import { DatabaseModule } from './database/database.module';
-import config from './config';
+import Config from './config/config';
+import configSchema from './config/configSchema';
 
 @Module({
   imports: [
@@ -27,14 +28,9 @@ import config from './config';
     DatabaseModule,
     ConfigModule.forRoot({
       envFilePath: environments[process.env.NODE_ENV] || './.env',
-      load: [config],
+      load: [Config],
       isGlobal: true,
-      validationSchema: Joi.object({
-        DATABASE_NAME: Joi.string().required(),
-        DATABASE_PORT: Joi.number().required(),
-        API_KEY: Joi.string().required(),
-        ENVIROMENT: Joi.string().required()
-      })
+      validationSchema: configSchema
     })
   ],
   controllers: [ AppController, OrdersController, ],
