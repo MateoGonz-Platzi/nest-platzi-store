@@ -30,7 +30,7 @@ const client = new Client({
 client.connect();
 
 client.query('SELECT * FROM tasks', (err, res) => {
-  console.log(err);
+  (err) ? console.log(err) : console.log('DB CONNECTED');
   console.log(res.rows);
 })
 @Module({
