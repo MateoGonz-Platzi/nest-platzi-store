@@ -19,20 +19,6 @@ import { ProductsModule } from './modules/products/products.module';
 import { DatabaseModule } from './database/database.module';
 import config from './config';
 
-const client = new Client({
-  user: 'root',
-  password: '123456',
-  database: 'store_db',
-  host: 'localhost',
-  port: 5432
-});
-
-client.connect();
-
-client.query('SELECT * FROM tasks', (err, res) => {
-  (err) ? console.log(err) : console.log('DB CONNECTED');
-  console.log(res.rows);
-})
 @Module({
   imports: [
     UsersModule, 
