@@ -1,9 +1,14 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Product } from './../entities/product.entity';
 import { CreateProductDto, UpdateProductDto } from '../dtos/products.dtos';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class ProductsService {
+  constructor(
+    @InjectRepository(Product) private productRepo: Repository<Product>,
+  ) {}
   // Esta variable funciona como autoincrementador,
   // para simular una base de datos
   private counterId = 1;
@@ -19,11 +24,11 @@ export class ProductsService {
   ];
   //Retorna todos
   findAll() {
-    return this.products;
+    return this.productRepo.find();
   }
   //Retorna solo uno
   findOne(id: number) {
-    const PRODUCT = this.products.find((item) => item.id === id);
+    const PRODUCT = this.productRepo.findOneBy({id});
     if (!PRODUCT) {
       throw new NotFoundException(
         `ERROR_SERVICE: The product ${id} does not exist`,
@@ -47,10 +52,10 @@ export class ProductsService {
     const PRODUCT = this.findOne(id);
     if (PRODUCT) {
       const index = this.products.findIndex((item) => item.id === id);
-      this.products[index] = {
+      /* this.products[index] = {
         ...PRODUCT,
         ...payload,
-      };
+      }; */
       return this.products[index];
     }
     return { message: 'ERROR_SERVICE: The id does not exist.' };

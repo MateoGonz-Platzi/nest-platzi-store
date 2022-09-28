@@ -82,7 +82,7 @@ export class UsersService {
     return {
       date: new Date(),
       user: USER,
-      products: this.productsService.findAll()
+      products: []/* this.productsService.findAll() */
     };
   }
 }

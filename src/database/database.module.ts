@@ -22,7 +22,9 @@ const PROD_API_KEY = 'prod1123638';
           port,
           username: user,
           password,
-          database
+          database,
+          synchronize: true,
+          autoLoadEntities: true,
         };
       },
     })
