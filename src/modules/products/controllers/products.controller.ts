@@ -50,19 +50,11 @@ export class ProductsController {
 
   @Post()
   create(@Body() payload: CreateProductDto) {
-    /* return {
-      message: 'Se creó un producto',
-      payload,
-    }; */
     return this.productsService.create(payload);
   }
 
   @Put(':id')
   update(@Param('id') id: number, @Body() payload: UpdateProductDto) {
-    /* return {
-      id,
-      payload,
-    }; */
     return this.productsService.update(+id, payload);
   }
 
