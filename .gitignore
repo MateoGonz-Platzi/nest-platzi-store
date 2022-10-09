@@ -6,7 +6,7 @@ data/*
 !database/script
 !data/script
 mongo_data
-
+# src/database/typeorm/migrations/*.ts
 # Logs
 logs
 *.log
