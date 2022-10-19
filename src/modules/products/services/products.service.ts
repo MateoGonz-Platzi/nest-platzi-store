@@ -35,6 +35,9 @@ export class ProductsService {
       this.productRepo.merge(PRODUCT, payload);
       return this.productRepo.save(PRODUCT);
     }
+    throw new NotFoundException(
+      `ERROR_SERVICE: The product ${id} does not exist`,
+    );
   }
 
   async remove(id: number) {

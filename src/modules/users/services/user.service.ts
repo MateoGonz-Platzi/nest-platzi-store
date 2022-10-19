@@ -4,30 +4,24 @@ import { User } from './../entities/user.entity';
 import { Order } from './../entities/order.entity';
 //Import Products Service 
 import { ProductsService } from './../../products/services/products.service';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 @Injectable()
 export class UsersService {
 
-  constructor(private productsService: ProductsService) {}
-
-  private counterId = 1;
-  private users: User[] = [
-    {
-      id: 1,
-      name: 'Mateo',
-      lastname: 'Grisales González',
-      email: 'Matt.Grisa@Gmail.com',
-      phone: '+57 3042124656'
-    }
-  ];
+  constructor(
+    private productsService: ProductsService,
+    @InjectRepository(User) private userRepo: Repository<User>,
+  ) {}
 
   //Return all users
   findAll() {
-    return this.users;
+    return this.userRepo.find();
   }
 
   //Return user by id
-  findOne(id: number) {
-    const USER = this.users.find((item) => item.id === id);
+  async findOne(id: number) {
+    const USER = await this.userRepo.findOneBy({id});
     if (!USER) {
       throw new NotFoundException(
         `ERROR_SERVICE: The user ${id} does not exist`,
@@ -38,51 +32,40 @@ export class UsersService {
 
   //create user
   create(payload: CreateUserDto) {
-    console.log(payload);
-    this.counterId += 1;
-    const newUser = {
-      id: this.counterId,
-      ...payload,
-    };
-    this.users.push(newUser);
-    return newUser;
+    const newUser = this.userRepo.create(payload);
+    return this.userRepo.save(newUser);
   }
 
   //update user
-  update(id: number, payload: UpdateUserDto) {
-    const USER = this.findOne(id);
+  async update(id: number, payload: UpdateUserDto) {
+    const USER = await this.findOne(id);
     if(USER) {
-      const index = this.users.findIndex((item) => item.id === id);
-      this.users[index] = {
-        ...USER,
-        ...payload,
-      };
-      return this.users[index];
+      this.userRepo.merge(USER, payload);
+      return this.userRepo.save(USER);
     }
-    return { message: 'ERROR_SERVICE: The id does not exist.' };
+    throw new NotFoundException(
+      `ERROR_SERVICE: The user ${id} does not exist`,
+    );
   }
 
   //Remove User
-  remove(id: number) {
-    const USER = this.findOne(id);
-    if (!USER) {
-      throw new NotFoundException(
-        `ERROR_SERVICE: The user ${id} does not exist`,
-      );
-    } else {
-      const temp = USER;
-      this.users = this.users.filter((item) => item.id !== id);
-      return { message: 'The user is deleted', deleted: temp };
+  async remove(id: number) {
+    const USER = await this.findOne(id);
+    if (USER) {
+      return this.userRepo.delete(id);
     }
+    throw new NotFoundException(
+      `ERROR_SERVICE: The user ${id} does not exist`,
+    );
   }
 
   //Relation with Orders
-  getOrderByUser(id: number): Order {
-    const USER = this.findOne(id);
-    return {
-      date: new Date(),
-      user: USER,
-      products: []/* this.productsService.findAll() */
-    };
-  }
+  // getOrderByUser(id: number): Order {
+  //   const USER = this.findOne(id);
+  //   return {
+  //     date: new Date(),
+  //     user: USER,
+  //     products: []/* this.productsService.findAll() */
+  //   };
+  // }
 }
