@@ -1,7 +1,8 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { TimestampRecord } from "src/modules/timestamp.class";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
-export class User {
+export class User extends TimestampRecord {
   @PrimaryGeneratedColumn()
   id: number;
   
@@ -19,16 +20,4 @@ export class User {
 
   @Column({type: 'varchar', length: 255})
   password: string; //Encript required ⚠️
-
-  @CreateDateColumn({
-    type: "timestamptz", //Nos permite ajustar la zona horaria automáticamente
-    default: () => 'CURRENT_TIMESTAMP', //Nos permite registrar el dato automáticamente
-  }) 
-  createdAt:Date;
-
-  @UpdateDateColumn({
-    type: "timestamptz", //Nos permite ajustar la zona horaria automáticamente
-    default: () => 'CURRENT_TIMESTAMP', //Nos permite registrar el dato automáticamente
-  }) 
-  updatedAt:Date;
 }

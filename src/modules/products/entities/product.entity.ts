@@ -1,13 +1,12 @@
+import { TimestampRecord } from 'src/modules/timestamp.class';
 import { 
   PrimaryGeneratedColumn, 
   Column, 
   Entity, 
-  CreateDateColumn, 
-  UpdateDateColumn
- } from 'typeorm';
+} from 'typeorm';
 
 @Entity()
-export class Product {
+export class Product  extends TimestampRecord {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -25,16 +24,4 @@ export class Product {
 
   @Column({type: 'varchar'})
   image: string;
-
-  @CreateDateColumn({
-    type: "timestamptz", //Nos permite ajustar la zona horaria automáticamente
-    default: () => 'CURRENT_TIMESTAMP', //Nos permite registrar el dato automáticamente
-  }) 
-  createdAt:Date;
-
-  @UpdateDateColumn({
-    type: "timestamptz", //Nos permite ajustar la zona horaria automáticamente
-    default: () => 'CURRENT_TIMESTAMP', //Nos permite registrar el dato automáticamente
-  }) 
-  updatedAt:Date;
 }
