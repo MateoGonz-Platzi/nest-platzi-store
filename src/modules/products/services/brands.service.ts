@@ -1,25 +1,23 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Brand } from './../entities/brand.entity';
 import { CreateBrandDto, UpdateBrandDto } from './../dtos/brands.dtos';
+import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class BrandsService {
-  private counterId = 1;
-  private brands: Brand[] = [
-    {
-      id: 1,
-      name: 'Nike',
-      description: 'Zapatillas Nike'
-    }
-  ];
+  constructor(
+    @InjectRepository(Brand)
+    private brandRepo: Repository<Brand>,
+  ) {}
 
-   //Retorna todos
+  //Retorna todas las marcas
   findAll() {
-    return this.brands;
+    return this.brandRepo.find();
   }
-  //Retorna solo uno
+  //Retorna solo una marca
   findOne(id: number) {
-    const BRAND = this.brands.find((item) => item.id === id);
+    const BRAND = this.brandRepo.findOneBy({id});
     if (!BRAND) {
       throw new NotFoundException(
         `ERROR_SERVICE: The brand ${id} does not exist`,
@@ -27,31 +25,23 @@ export class BrandsService {
     }
     return BRAND;
   }
-
+  //Crea una marca
   create(payload: CreateBrandDto) {
-    console.log(payload);
-    this.counterId += 1;
-    const newBrand = {
-      id: this.counterId,
-      ...payload,
-    };
-    this.brands.push(newBrand);
-    return newBrand;
+    const newBrand = this.brandRepo.create(payload); 
+    return this.brandRepo.save(newBrand);
   }
-
-  update(id: number, payload: UpdateBrandDto) {
-    const BRAND = this.findOne(id);
+  //Actualizar una marca
+  async update(id: number, payload: UpdateBrandDto) {
+    const BRAND = await this.findOne(id);
     if (BRAND) {
-      const index = this.brands.findIndex((item) => item.id === id);
-      this.brands[index] = {
-        ...BRAND,
-        ...payload,
-      };
-      return this.brands[index];
+      this.brandRepo.merge(BRAND, payload);
+      return this.brandRepo.save(BRAND)
     }
-    return { message: 'ERROR_SERVICE: The id does not exist.' };
+    throw new NotFoundException(
+      `ERROR_SERVICE: The brand ${id} does not exist`,
+    );
   }
-
+  //Eliminar una marca
   remove(id: number) {
     const BRAND = this.findOne(id);
     if (!BRAND) {
@@ -59,9 +49,7 @@ export class BrandsService {
         `ERROR_SERVICE: The brand ${id} does not exist`,
       );
     } else {
-      const temp = BRAND;
-      this.brands = this.brands.filter((item) => item.id !== id);
-      return { message: 'The brand is deleted', deleted: temp };
+      return this.brandRepo.delete(id);
     }
   }
 }
