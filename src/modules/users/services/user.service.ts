@@ -6,22 +6,29 @@ import { Order } from './../entities/order.entity';
 import { ProductsService } from './../../products/services/products.service';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CustomerService } from './customers.service';
 @Injectable()
 export class UsersService {
 
   constructor(
     private productsService: ProductsService,
+    private customersService: CustomerService,
     @InjectRepository(User) private userRepo: Repository<User>,
   ) {}
 
   //Return all users
   findAll() {
-    return this.userRepo.find();
+    return this.userRepo.find({
+      relations: ['customer']
+    });
   }
 
   //Return user by id
   async findOne(id: number) {
-    const USER = await this.userRepo.findOneBy({id});
+    const USER = await this.userRepo.findOne({
+      where: {id},
+      relations: ['customer']
+    });
     if (!USER) {
       throw new NotFoundException(
         `ERROR_SERVICE: The user ${id} does not exist`,
@@ -31,8 +38,12 @@ export class UsersService {
   }
 
   //create user
-  create(payload: CreateUserDto) {
+  async create(payload: CreateUserDto) {
     const newUser = this.userRepo.create(payload);
+    if(payload.customerId) {
+      const customer = await this.customersService.findOne(payload.customerId)
+      newUser.customer = customer;
+    }
     return this.userRepo.save(newUser);
   }
 

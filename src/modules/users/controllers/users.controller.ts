@@ -50,6 +50,6 @@ export class UsersController {
   //Relation with Orders
   @Get(':userId/orders')
   getOrders(@Param('userId', ParseIntPipe) userId: number,) { 
-    return this.userService.getOrderByUser(userId); 
+    //return this.userService.getOrderByUser(userId); 
   }
 }
