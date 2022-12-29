@@ -22,11 +22,13 @@ import { CreateProductDto, UpdateProductDto } from '../dtos/products.dtos';
 @ApiTags('PRODUCTS')
 @Controller('products')
 export class ProductsController {
-  constructor(private productsService: ProductsService) {}
+  constructor(
+    private productsService: ProductsService,
+  ) { }
 
   //ENDPOINT PARA VARIOS PRODUCTOS:
   @Get()
-  @ApiOperation({ summary: 'List all products'})
+  @ApiOperation({ summary: 'List all products' })
   getProducts(
     @Query('limit') limit = 100, //En caso de que no envién el limite
     @Query('offset') offset = 0,
