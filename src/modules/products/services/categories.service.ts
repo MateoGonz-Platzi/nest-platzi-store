@@ -16,13 +16,13 @@ export class CategoriesService {
   }
   //Retorna solo uno
   findOne(id: number) {
-    const CATEGORY = this.categoryRepo.findOneBy({ id });
-    if (!CATEGORY) {
+    const categoryFind = this.categoryRepo.findOne({ relations: ['products'], where: { id } });
+    if (!categoryFind) {
       throw new NotFoundException(
         `ERROR_SERVICE: The category ${id} does not exist`,
       );
     }
-    return CATEGORY;
+    return categoryFind;
   }
 
   create(payload: CreateCategoryDto) {

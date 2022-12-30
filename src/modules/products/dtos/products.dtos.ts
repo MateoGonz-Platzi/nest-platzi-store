@@ -5,6 +5,8 @@ import {
   IsUrl,
   IsNotEmpty,
   IsPositive,
+  IsArray,
+  ArrayNotEmpty,
 } from 'class-validator';
 export class CreateProductDto {
   @IsString()
@@ -39,6 +41,12 @@ export class CreateProductDto {
   @IsNotEmpty()
   @ApiProperty({ description: 'Product brand' })
   readonly brandId: number;
+
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsNumber({}, { each: true })
+  @ApiProperty({ description: 'Product categories' })
+  readonly categoriesIds: number[];
 }
 
 export class UpdateProductDto extends PartialType(CreateProductDto) { }

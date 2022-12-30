@@ -1,10 +1,10 @@
 import { Product } from './product.entity';
 import { TimestampRecord } from "../../../database/timestamp.entity";
-import { Column, Entity, JoinTable, ManyToMany, PrimaryColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Category extends TimestampRecord {
-  @PrimaryColumn()
+  @PrimaryGeneratedColumn()
   id: number;
 
   @Column({ type: 'varchar', length: 255, unique: true })
