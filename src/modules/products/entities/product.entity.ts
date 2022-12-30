@@ -4,8 +4,10 @@ import {
   Column,
   Entity,
   ManyToOne,
+  ManyToMany,
 } from 'typeorm';
 import { Brand } from './brand.entity';
+import { Category } from './category.entity';
 
 @Entity()
 export class Product extends TimestampRecord {
@@ -29,4 +31,7 @@ export class Product extends TimestampRecord {
 
   @ManyToOne(() => Brand, (brand) => brand.products)
   brand: Brand;
+
+  @ManyToMany(() => Category, (category) => category.products, { nullable: true })
+  categories: Category[];
 }
