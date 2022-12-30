@@ -49,9 +49,11 @@ export class ProductsService {
   async update(id: number, payload: UpdateProductDto) {
     const updateProduct = await this.findOne(id);
     const brand = await this.brandRepo.findOneBy({ id: payload.brandId });
+    const categories = await this.categoryRepo.findBy({ id: In(payload.categoriesIds) });
 
-    if (updateProduct && brand) {
+    if (updateProduct && brand && categories) {
       updateProduct.brand = brand;
+      updateProduct.categories = categories;
       this.productRepo.merge(updateProduct, payload);
       this.logger.log(`Product ${id} updated successfully`);
       return this.productRepo.save(updateProduct);
@@ -75,5 +77,19 @@ export class ProductsService {
     } else {
       return this.productRepo.delete(id);
     }
+  }
+
+  //CATEGORY IMPLEMENTS
+  async addCategoryProduct(id: number, categoryId: number) {
+    const product = await this.productRepo.findOne({ relations: ['categories'], where: { id } });
+    const category = await this.categoryRepo.findOneBy({ id: categoryId });
+    if (!product.categories.includes(category)) product.categories.push(category);
+    return this.productRepo.save(product);
+  }
+
+  async removeCategoryProduct(id: number, categoryId: number) {
+    const product = await this.productRepo.findOne({ relations: ['categories'], where: { id } });
+    product.categories = product.categories.filter((category) => category.id !== categoryId);
+    return this.productRepo.save(product);
   }
 }
