@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { User } from "./user.entity";
-import { Order } from "./order.entity";
+import { Order } from "./../../../modules/orders/entities/order.entity";
 
 @Entity()
 export class Customer extends TimestampRecord {
