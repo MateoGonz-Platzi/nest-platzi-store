@@ -17,14 +17,16 @@ import { AppService } from './app.service';
 import { UsersModule } from './modules/users/users.module';
 import { ProductsModule } from './modules/products/products.module';
 import { DatabaseModule } from './database/database.module';
+import { OrdersService } from './modules/orders/services/orders.service';
+
 import Config from './config/config';
 import configSchema from './config/configSchema';
 
 @Module({
   imports: [
-    UsersModule, 
-    ProductsModule, 
-    HttpModule, 
+    UsersModule,
+    ProductsModule,
+    HttpModule,
     DatabaseModule,
     ConfigModule.forRoot({
       envFilePath: environments[process.env.NODE_ENV] || './.env',
@@ -33,19 +35,19 @@ import configSchema from './config/configSchema';
       validationSchema: configSchema
     })
   ],
-  controllers: [ AppController, OrdersController, ],
-  providers: [ 
-    AppService, 
+  controllers: [AppController, OrdersController,],
+  providers: [
+    AppService,
     {
       provide: 'TASKS',
       useFactory: async (http: HttpService) => {
         const tasks = await lastValueFrom(
-          http.get( 'https://jsonplaceholder.typicode.com/todos'),
+          http.get('https://jsonplaceholder.typicode.com/todos'),
         );
         return tasks.data;
-      }, 
+      },
       inject: [HttpService],
-    },
+    }, OrdersService,
   ],
 })
 export class AppModule { }
