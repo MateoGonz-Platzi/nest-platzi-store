@@ -3,27 +3,24 @@ import { HttpModule, HttpService } from '@nestjs/axios';
 //Enviroments Config
 import { ConfigModule } from '@nestjs/config';
 import { lastValueFrom } from 'rxjs';
-import * as Joi from 'joi';
-import { Client } from 'pg';
-
 //Environment
 import { environments } from './environments';
 //Controllers
 import { AppController } from './app.controller';
-import { OrdersController } from './modules/orders/controllers/orders.controller';
 //Services
 import { AppService } from './app.service';
 //Modules
 import { UsersModule } from './modules/users/users.module';
 import { ProductsModule } from './modules/products/products.module';
 import { DatabaseModule } from './database/database.module';
-import { OrdersService } from './modules/orders/services/orders.service';
+import { OrdersModule } from './modules/orders/orders.module';
 
 import Config from './config/config';
 import configSchema from './config/configSchema';
 
 @Module({
   imports: [
+    OrdersModule,
     UsersModule,
     ProductsModule,
     HttpModule,
@@ -35,7 +32,7 @@ import configSchema from './config/configSchema';
       validationSchema: configSchema
     })
   ],
-  controllers: [AppController, OrdersController,],
+  controllers: [AppController],
   providers: [
     AppService,
     {
@@ -47,7 +44,7 @@ import configSchema from './config/configSchema';
         return tasks.data;
       },
       inject: [HttpService],
-    }, OrdersService,
+    },
   ],
 })
 export class AppModule { }
