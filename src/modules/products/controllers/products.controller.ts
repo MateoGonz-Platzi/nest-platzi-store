@@ -1,3 +1,4 @@
+import { FilterProdutsDto } from './../dtos/products.dtos';
 import {
   Controller,
   Get,
@@ -26,14 +27,16 @@ export class ProductsController {
     private productsService: ProductsService,
   ) { }
 
-  //ENDPOINT PARA VARIOS PRODUCTOS:
+  /**
+   * ENDPOINT PARA VARIOS PRODUCTOS:
+   * */
+
+  //Get products by params pagination filter
   @Get()
-  @ApiOperation({ summary: 'List all products' })
-  getProducts(
-    @Query('limit') limit = 100, //En caso de que no envién el limite
-    @Query('offset') offset = 0,
-    @Query('brand') brand: string,
-  ) { return this.productsService.findAll(); } //RETORNAMOS EL METODO DEL 
+  @ApiOperation({ summary: 'List all products by pagination.' })
+  getProducts(@Query() params: FilterProdutsDto) {
+    return this.productsService.findAll(params);
+  }
 
   @Get('filter')
   getFilter() {

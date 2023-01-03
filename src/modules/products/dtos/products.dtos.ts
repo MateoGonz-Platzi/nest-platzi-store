@@ -7,6 +7,8 @@ import {
   IsPositive,
   IsArray,
   ArrayNotEmpty,
+  IsOptional,
+  Min,
 } from 'class-validator';
 export class CreateProductDto {
   @IsString()
@@ -50,3 +52,15 @@ export class CreateProductDto {
 }
 
 export class UpdateProductDto extends PartialType(CreateProductDto) { }
+
+export class FilterProdutsDto {
+  @IsOptional()
+  @IsPositive()
+  @ApiProperty({ description: "Filter limit number of products" })
+  limit: number;
+
+  @IsOptional()
+  @Min(0)
+  @ApiProperty({ description: "Filter number of products omitted" })
+  offset: number;
+}

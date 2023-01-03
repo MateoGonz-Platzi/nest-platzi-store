@@ -1,3 +1,4 @@
+import { FilterProdutsDto } from './../dtos/products.dtos';
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Product } from './../entities/product.entity';
 import { CreateProductDto, UpdateProductDto } from '../dtos/products.dtos';
@@ -18,7 +19,15 @@ export class ProductsService {
     private brandRepo: Repository<Brand>
   ) { }
   //Retorna todos
-  findAll() {
+  findAll(params?: FilterProdutsDto) {
+    if (params) {
+      const { limit, offset } = params;
+      return this.productRepo.find({
+        relations: ['brand'],
+        take: limit,
+        skip: offset
+      });
+    }
     return this.productRepo.find({ relations: ['brand'] });
   }
   //Retorna solo uno
