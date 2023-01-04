@@ -9,6 +9,7 @@ import {
   ArrayNotEmpty,
   IsOptional,
   Min,
+  ValidateIf,
 } from 'class-validator';
 export class CreateProductDto {
   @IsString()
@@ -63,4 +64,13 @@ export class FilterProdutsDto {
   @Min(0)
   @ApiProperty({ description: "Filter number of products omitted" })
   offset: number;
+
+  @IsOptional()
+  @IsPositive()
+  @ApiProperty({ description: "Filter min price of products" })
+  minPrice: number;
+
+  @ValidateIf((item) => item.minPrice)
+  @IsPositive()
+  maxPrice: number;
 }
