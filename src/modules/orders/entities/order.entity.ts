@@ -1,4 +1,4 @@
-import { Customer } from 'src/modules/users/entities/customer.entity';
+import { Customer } from './../../../modules/users/entities/customer.entity';
 import { Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 
 import { TimestampRecord } from "../../../database/timestamp.entity";

@@ -5,11 +5,12 @@ import {
   Entity,
   ManyToOne,
   ManyToMany,
+  Index,
 } from 'typeorm';
 import { Brand } from './brand.entity';
 import { Category } from './category.entity';
-
 @Entity()
+@Index(['price', 'stock']) //Indexación de un conjunto
 export class Product extends TimestampRecord {
   @PrimaryGeneratedColumn()
   id: number;
@@ -20,6 +21,7 @@ export class Product extends TimestampRecord {
   @Column({ type: 'text' }) //Standart JSON Format: text Postgres 
   description: string;
 
+  @Index() //Indexación por un elemento
   @Column({ type: 'int' })
   price: number;
 
