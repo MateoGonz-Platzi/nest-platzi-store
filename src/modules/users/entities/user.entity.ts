@@ -24,6 +24,6 @@ export class User extends TimestampRecord {
 
   //Relación 1:1 user > customer
   @OneToOne(() => Customer, (customer) => customer.user, { nullable: true }) //nullable Propiedad null.
-  @JoinColumn() //Genera el vinculo foraneo con customer
+  @JoinColumn({ name: 'customer_id' }) //Genera el vinculo foraneo con customer - Se implementa naming
   customer: Customer;
 }

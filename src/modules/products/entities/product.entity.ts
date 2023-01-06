@@ -6,10 +6,12 @@ import {
   ManyToOne,
   ManyToMany,
   Index,
+  JoinColumn,
+  JoinTable,
 } from 'typeorm';
 import { Brand } from './brand.entity';
 import { Category } from './category.entity';
-@Entity()
+@Entity({ name: 'products' }) //Impementamos naming
 @Index(['price', 'stock']) //Indexación de un conjunto
 export class Product extends TimestampRecord {
   @PrimaryGeneratedColumn()
@@ -32,8 +34,18 @@ export class Product extends TimestampRecord {
   image: string;
 
   @ManyToOne(() => Brand, (brand) => brand.products)
+  @JoinColumn({ name: 'brand_id' })
   brand: Brand;
 
   @ManyToMany(() => Category, (category) => category.products, { nullable: true })
+  @JoinTable({
+    name: 'product_categories', //nombre de la tabla
+    joinColumn: {
+      name: 'product_id' //nombramos la columna
+    },
+    inverseJoinColumn: {
+      name: 'category_id' //Nombramos la columna de la relación.
+    }
+  })
   categories: Category[];
 }
