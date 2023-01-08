@@ -17,9 +17,10 @@ import { OrdersModule } from './modules/orders/orders.module';
 
 import Config from './config/config';
 import configSchema from './config/configSchema';
-
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
+    AuthModule,
     OrdersModule,
     UsersModule,
     ProductsModule,
