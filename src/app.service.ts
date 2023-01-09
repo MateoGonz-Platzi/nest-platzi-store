@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { ConfigService, ConfigType } from '@nestjs/config';
 import config from './config/config';
 import { Client, QueryResult } from 'pg';
@@ -9,8 +9,8 @@ export class AppService {
     @Inject(config.KEY) private configService: ConfigType<typeof config>,
     @Inject('TASKS') private tasks: any[],
     @Inject('PG_CONNECTION') private clientPg: Client
-  ) {}
-  
+  ) { }
+
   getHello(): string {
     const apiKey = this.configService.apiKey;
     const dbName = this.configService.database.name;
@@ -28,12 +28,12 @@ export class AppService {
   }
 
   getTasks() {
-  // Implementación de promesas en el query
-  return new Promise((resolve, reject) => {
-    this.clientPg.query('SELECT * FROM tasks;', (err, res) => {
-      (err) ? reject(err) : console.log(res.rows);
-      resolve(res.rows);
-    })
-  });
+    // Implementación de promesas en el query
+    return new Promise((resolve, reject) => {
+      //return in database
+      this.clientPg.query('SELECT * FROM tasks;', (err, res) => {
+        (err) ? reject(err) : resolve(res.rows);
+      })
+    });
   }
 }
