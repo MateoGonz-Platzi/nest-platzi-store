@@ -1,7 +1,9 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, SetMetadata, UseGuards } from '@nestjs/common';
 import { AppService } from './app.service';
+import { PublicRequest } from './auth/decorators/public-request.decorator';
 import { ApikeyGuard } from './auth/guards/apikey.guard';
 
+@UseGuards(ApikeyGuard)
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) { }
@@ -11,7 +13,7 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  @UseGuards(ApikeyGuard)
+  @PublicRequest()
   @Get('new')
   newEndPoint() {
     return 'NUEVO ENDPOINT';
