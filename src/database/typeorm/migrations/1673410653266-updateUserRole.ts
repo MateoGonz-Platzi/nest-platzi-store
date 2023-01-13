@@ -1,36 +1,9 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class initUpdateDatabase1672808728969 implements MigrationInterface {
-    name = 'initUpdateDatabase1672808728969'
+export class updateUserRole1673410653266 implements MigrationInterface {
+    name = 'updateUserRole1673410653266'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.query(`
-            CREATE TABLE "user" (
-                "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-                "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-                "id" SERIAL NOT NULL,
-                "name" character varying(255) NOT NULL,
-                "lastname" character varying(255) NOT NULL,
-                "email" character varying NOT NULL,
-                "phone" character varying NOT NULL,
-                "password" character varying(255) NOT NULL,
-                "customer_id" integer,
-                CONSTRAINT "REL_d72eb2a5bbff4f2533a5d4caff" UNIQUE ("customer_id"),
-                CONSTRAINT "PK_cace4a159ff9f2512dd42373760" PRIMARY KEY ("id")
-            )
-        `);
-        await queryRunner.query(`
-            CREATE TABLE "customer" (
-                "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-                "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
-                "id" SERIAL NOT NULL,
-                "name" character varying(255) NOT NULL,
-                "lastname" character varying(255) NOT NULL,
-                "email" character varying NOT NULL,
-                "phone" character varying NOT NULL,
-                CONSTRAINT "PK_a7a13f4cacb744524e44dfdad32" PRIMARY KEY ("id")
-            )
-        `);
         await queryRunner.query(`
             CREATE TABLE "brand" (
                 "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
@@ -76,14 +49,32 @@ export class initUpdateDatabase1672808728969 implements MigrationInterface {
             CREATE INDEX "IDX_4fbc36ad745962e5c11001e1a8" ON "products" ("price", "stock")
         `);
         await queryRunner.query(`
-            CREATE TABLE "order_item" (
+            CREATE TABLE "user" (
                 "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
                 "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
                 "id" SERIAL NOT NULL,
-                "quantity" integer NOT NULL,
-                "productId" integer,
-                "orderId" integer,
-                CONSTRAINT "PK_d01158fe15b1ead5c26fd7f4e90" PRIMARY KEY ("id")
+                "role" character varying(100) NOT NULL,
+                "name" character varying(255) NOT NULL,
+                "lastname" character varying(255) NOT NULL,
+                "email" character varying NOT NULL,
+                "phone" character varying NOT NULL,
+                "password" character varying(255) NOT NULL,
+                "customer_id" integer,
+                CONSTRAINT "UQ_e12875dfb3b1d92d7d7c5377e22" UNIQUE ("email"),
+                CONSTRAINT "REL_d72eb2a5bbff4f2533a5d4caff" UNIQUE ("customer_id"),
+                CONSTRAINT "PK_cace4a159ff9f2512dd42373760" PRIMARY KEY ("id")
+            )
+        `);
+        await queryRunner.query(`
+            CREATE TABLE "customer" (
+                "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+                "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+                "id" SERIAL NOT NULL,
+                "name" character varying(255) NOT NULL,
+                "lastname" character varying(255) NOT NULL,
+                "email" character varying NOT NULL,
+                "phone" character varying NOT NULL,
+                CONSTRAINT "PK_a7a13f4cacb744524e44dfdad32" PRIMARY KEY ("id")
             )
         `);
         await queryRunner.query(`
@@ -93,6 +84,17 @@ export class initUpdateDatabase1672808728969 implements MigrationInterface {
                 "id" SERIAL NOT NULL,
                 "customerId" integer,
                 CONSTRAINT "PK_1031171c13130102495201e3e20" PRIMARY KEY ("id")
+            )
+        `);
+        await queryRunner.query(`
+            CREATE TABLE "order_item" (
+                "created_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+                "updated_at" TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now(),
+                "id" SERIAL NOT NULL,
+                "quantity" integer NOT NULL,
+                "productId" integer,
+                "orderId" integer,
+                CONSTRAINT "PK_d01158fe15b1ead5c26fd7f4e90" PRIMARY KEY ("id")
             )
         `);
         await queryRunner.query(`
@@ -122,12 +124,16 @@ export class initUpdateDatabase1672808728969 implements MigrationInterface {
             CREATE INDEX "IDX_9148da8f26fc248e77a387e311" ON "product_categories" ("category_id")
         `);
         await queryRunner.query(`
+            ALTER TABLE "products"
+            ADD CONSTRAINT "FK_1530a6f15d3c79d1b70be98f2be" FOREIGN KEY ("brand_id") REFERENCES "brand"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+        `);
+        await queryRunner.query(`
             ALTER TABLE "user"
             ADD CONSTRAINT "FK_d72eb2a5bbff4f2533a5d4caff9" FOREIGN KEY ("customer_id") REFERENCES "customer"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
         await queryRunner.query(`
-            ALTER TABLE "products"
-            ADD CONSTRAINT "FK_1530a6f15d3c79d1b70be98f2be" FOREIGN KEY ("brand_id") REFERENCES "brand"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
+            ALTER TABLE "order"
+            ADD CONSTRAINT "FK_124456e637cca7a415897dce659" FOREIGN KEY ("customerId") REFERENCES "customer"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
         await queryRunner.query(`
             ALTER TABLE "order_item"
@@ -136,10 +142,6 @@ export class initUpdateDatabase1672808728969 implements MigrationInterface {
         await queryRunner.query(`
             ALTER TABLE "order_item"
             ADD CONSTRAINT "FK_646bf9ece6f45dbe41c203e06e0" FOREIGN KEY ("orderId") REFERENCES "order"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
-        `);
-        await queryRunner.query(`
-            ALTER TABLE "order"
-            ADD CONSTRAINT "FK_124456e637cca7a415897dce659" FOREIGN KEY ("customerId") REFERENCES "customer"("id") ON DELETE NO ACTION ON UPDATE NO ACTION
         `);
         await queryRunner.query(`
             ALTER TABLE "category_products"
@@ -173,19 +175,19 @@ export class initUpdateDatabase1672808728969 implements MigrationInterface {
             ALTER TABLE "category_products" DROP CONSTRAINT "FK_32ec224dcbe81a122d5c35a1305"
         `);
         await queryRunner.query(`
-            ALTER TABLE "order" DROP CONSTRAINT "FK_124456e637cca7a415897dce659"
-        `);
-        await queryRunner.query(`
             ALTER TABLE "order_item" DROP CONSTRAINT "FK_646bf9ece6f45dbe41c203e06e0"
         `);
         await queryRunner.query(`
             ALTER TABLE "order_item" DROP CONSTRAINT "FK_904370c093ceea4369659a3c810"
         `);
         await queryRunner.query(`
-            ALTER TABLE "products" DROP CONSTRAINT "FK_1530a6f15d3c79d1b70be98f2be"
+            ALTER TABLE "order" DROP CONSTRAINT "FK_124456e637cca7a415897dce659"
         `);
         await queryRunner.query(`
             ALTER TABLE "user" DROP CONSTRAINT "FK_d72eb2a5bbff4f2533a5d4caff9"
+        `);
+        await queryRunner.query(`
+            ALTER TABLE "products" DROP CONSTRAINT "FK_1530a6f15d3c79d1b70be98f2be"
         `);
         await queryRunner.query(`
             DROP INDEX "public"."IDX_9148da8f26fc248e77a387e311"
@@ -206,10 +208,16 @@ export class initUpdateDatabase1672808728969 implements MigrationInterface {
             DROP TABLE "category_products"
         `);
         await queryRunner.query(`
+            DROP TABLE "order_item"
+        `);
+        await queryRunner.query(`
             DROP TABLE "order"
         `);
         await queryRunner.query(`
-            DROP TABLE "order_item"
+            DROP TABLE "customer"
+        `);
+        await queryRunner.query(`
+            DROP TABLE "user"
         `);
         await queryRunner.query(`
             DROP INDEX "public"."IDX_4fbc36ad745962e5c11001e1a8"
@@ -225,12 +233,6 @@ export class initUpdateDatabase1672808728969 implements MigrationInterface {
         `);
         await queryRunner.query(`
             DROP TABLE "brand"
-        `);
-        await queryRunner.query(`
-            DROP TABLE "customer"
-        `);
-        await queryRunner.query(`
-            DROP TABLE "user"
         `);
     }
 

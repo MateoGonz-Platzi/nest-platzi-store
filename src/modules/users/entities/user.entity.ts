@@ -8,6 +8,9 @@ export class User extends TimestampRecord {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ type: 'varchar', length: 100 })
+  role: string;
+
   @Column({ type: 'varchar', length: 255 })
   name: string;
 

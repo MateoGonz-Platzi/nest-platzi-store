@@ -1,6 +1,6 @@
 import { registerAs } from '@nestjs/config';
 
-export default registerAs('config', ( ) => {
+export default registerAs('config', () => {
   return {
     database: {
       name: process.env.DATABASE_NAME,
@@ -21,6 +21,10 @@ export default registerAs('config', ( ) => {
       port: parseInt(process.env.MYSQL_PORT, 10)
     },
     apiKey: process.env.API_KEY,
-    enviroment: process.env.ENVIROMENT
+    enviroment: process.env.ENVIROMENT,
+    jwtConfig: {
+      jwtSecret: process.env.JWT_SECRET,
+      sessionTime: process.env.SESSION_TIME
+    }
   }
 });
