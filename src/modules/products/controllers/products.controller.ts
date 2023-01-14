@@ -1,4 +1,3 @@
-import { FilterProdutsDto } from './../dtos/products.dtos';
 import {
   Controller,
   Get,
@@ -12,14 +11,17 @@ import {
   HttpCode,
   Res,
   ParseIntPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
 import { ProductsService } from '../services/products.service';
+import { FilterProdutsDto } from './../dtos/products.dtos';
 import { CreateProductDto, UpdateProductDto } from '../dtos/products.dtos';
 /* import { ParseIntPipe } from '../../../common/platzi-pipe/parse-int.pipe'; */
-
+@UseGuards(AuthGuard('jwt'))
 @ApiTags('PRODUCTS')
 @Controller('products')
 export class ProductsController {
