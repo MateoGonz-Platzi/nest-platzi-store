@@ -13,15 +13,14 @@ import {
   ParseIntPipe,
   UseGuards,
 } from '@nestjs/common';
-import { Response } from 'express';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
 
 import { ProductsService } from '../services/products.service';
 import { FilterProdutsDto } from './../dtos/products.dtos';
 import { CreateProductDto, UpdateProductDto } from '../dtos/products.dtos';
-/* import { ParseIntPipe } from '../../../common/platzi-pipe/parse-int.pipe'; */
-@UseGuards(AuthGuard('jwt'))
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { PublicRequest } from 'src/auth/decorators/public-request.decorator';
+@UseGuards(JwtAuthGuard)
 @ApiTags('PRODUCTS')
 @Controller('products')
 export class ProductsController {
@@ -34,6 +33,7 @@ export class ProductsController {
    * */
 
   //Get products by params pagination filter
+  @PublicRequest()
   @Get()
   @ApiOperation({ summary: 'List all products by pagination.' })
   getProducts(@Query() params: FilterProdutsDto) {
@@ -46,6 +46,7 @@ export class ProductsController {
   }
 
   //RETORNAR UN SOLO PRODUCTO
+  @PublicRequest()
   @Get(':productId')
   @HttpCode(HttpStatus.ACCEPTED) //f12 para ir a la definicion y entender como funcionan los estados personalizados de nest
   getOne(
