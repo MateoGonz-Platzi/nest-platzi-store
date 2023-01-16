@@ -1,3 +1,4 @@
+import { RolesGuard } from './../../../auth/guards/roles.guard';
 import {
   Controller,
   Get,
@@ -20,7 +21,9 @@ import { FilterProdutsDto } from './../dtos/products.dtos';
 import { CreateProductDto, UpdateProductDto } from '../dtos/products.dtos';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { PublicRequest } from 'src/auth/decorators/public-request.decorator';
-@UseGuards(JwtAuthGuard)
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Role } from 'src/auth/model/roles.model';
+@UseGuards(JwtAuthGuard, RolesGuard)
 @ApiTags('PRODUCTS')
 @Controller('products')
 export class ProductsController {
@@ -56,6 +59,7 @@ export class ProductsController {
     return this.productsService.findOne(productId);
   }
 
+  @Roles(Role.ADMIN)
   @Post()
   create(@Body() payload: CreateProductDto) {
     return this.productsService.create(payload);
